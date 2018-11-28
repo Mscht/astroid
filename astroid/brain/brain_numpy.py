@@ -299,6 +299,8 @@ def numpy_core_numerictypes_transform():
             self.size = None
             self.strides = None
 
+        def __invert__(self): pass
+
         def all(self): pass
         def any(self): pass
         def argmax(self): pass
