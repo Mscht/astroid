@@ -65,6 +65,14 @@ def numpy_random_mtrand_transform():
     )
 
 
+def numpy_core_records_transform():
+    return astroid.parse('''
+    def array(obj, dtype=None, shape=None, offset=0, strides=None, formats=None,
+          names=None, titles=None, aligned=False, byteorder=None, copy=True):
+        return ndarray(0)
+    ''')
+
+
 def numpy_core_umath_transform():
     ufunc_optional_keyword_arguments = (
         """out=None, where=True, casting='same_kind', order='K', """
@@ -472,10 +480,16 @@ def numpy_funcs():
     import builtins
     def sum(a, axis=None, dtype=None, out=None, keepdims=None):
         return builtins.sum(a)
+    def isnan(x, out=None, where=True, casting='same_kind', order='K', dtype=None, subok=True):
+        pass
+    def zeros(shape, dtype=float, order='C'):
+        pass
     """
     )
 
-
+astroid.register_module_extender(
+    astroid.MANAGER, 'numpy.core.records', numpy_core_records_transform
+)
 astroid.register_module_extender(
     astroid.MANAGER, "numpy.core.umath", numpy_core_umath_transform
 )
