@@ -72,6 +72,11 @@ def numpy_core_records_transform():
         return ndarray(0)
     ''')
 
+def numpy_core_multiarray_transform():
+    return astroid.parse(
+        """
+        def zeros(shape, dtype=float, order='C'): pass
+    """)
 
 def numpy_core_umath_transform():
     ufunc_optional_keyword_arguments = (
@@ -109,6 +114,7 @@ def numpy_core_umath_transform():
     def frexp(x, {opt_args:s}): pass
     def isfinite(x, {opt_args:s}): pass
     def isinf(x, {opt_args:s}): pass
+    def isnan(x, {opt_args:s}): pass
     def log(x, {opt_args:s}): pass
     def log1p(x, {opt_args:s}): pass
     def log2(x, {opt_args:s}): pass
@@ -476,21 +482,26 @@ def numpy_core_numerictypes_transform():
     )
 
 
-def numpy_funcs():
-    return astroid.parse(
-        """
-    import builtins
-    def sum(a, axis=None, dtype=None, out=None, keepdims=None):
-        return builtins.sum(a)
-    def isnan(x, out=None, where=True, casting='same_kind', order='K', dtype=None, subok=True):
-        pass
-    def zeros(shape, dtype=float, order='C'):
-        pass
-    """
-    )
+#===================================================================================================
+# def numpy_funcs():
+#     return astroid.parse(
+#         """
+#     import builtins
+#     def sum(a, axis=None, dtype=None, out=None, keepdims=None):
+#         return builtins.sum(a)
+#     def isnan(x, out=None, where=True, casting='same_kind', order='K', dtype=None, subok=True):
+#         pass
+#     def zeros(shape, dtype=float, order='C'):
+#         pass
+#     """
+#     )
+#===================================================================================================
 
 astroid.register_module_extender(
     astroid.MANAGER, 'numpy.core.records', numpy_core_records_transform
+)
+astroid.register_module_extender(
+    astroid.MANAGER, 'numpy.core.multiarray', numpy_core_multiarray_transform
 )
 astroid.register_module_extender(
     astroid.MANAGER, "numpy.core.umath", numpy_core_umath_transform
@@ -501,4 +512,3 @@ astroid.register_module_extender(
 astroid.register_module_extender(
     astroid.MANAGER, "numpy.core.numerictypes", numpy_core_numerictypes_transform
 )
-astroid.register_module_extender(astroid.MANAGER, "numpy", numpy_funcs)
